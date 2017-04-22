@@ -2,8 +2,14 @@
 using System.Collections;
 
 public class HealthBar : MonoBehaviour {
-	
-	void UpdateHealthPercentage (int percentage) {
-	    
+
+    Component Bar;
+
+    void Start() {
+        Bar = GetComponent("bar");
+    }
+
+	public void UpdateHealthPercentage () {
+        
 	}
 }

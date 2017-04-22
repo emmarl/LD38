@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
 
 public enum Attack { Fireball, Icebeam, Whirlwind, Rocksmash, None }
 
@@ -7,36 +8,39 @@ public enum CombatState { NoobTurn, ChumpTurn, GameOver, Setup }
 
 public class Combat : MonoBehaviour {
 
-    Noob CurrentNoob;
-    CombatState CurrentState;
-    int Health;
-    bool AmDead { get { return Health <= 0; } }
+    Guy Noob;
+    Guy Chump;
+    Slider ChumpHealthBar;
+    Slider NoobHealthBar;
 
+    public CombatState CurrentState;
     bool AttackMade;
-
-	// Use this for initialization
-	void Start () {
+    
+    public void InitializeCombat(Guy chump, Guy noob) {
         CurrentState = CombatState.Setup;
-        Fight();
-	}
-
-    void Fight() {
-        CurrentNoob = GameObject.Find("noob").GetComponent<Noob>();
-        CurrentNoob.TakeTurn();
-        Health = 200;
+        Chump = chump;
+        Noob = noob;
+        ChumpHealthBar = GameObject.Find("Chump Health").GetComponent<Slider>();
+        ChumpHealthBar.maxValue = Chump.TotalHealth;
+        ChumpHealthBar.value = Chump.Health;
+        NoobHealthBar = GameObject.Find("Noob Health").GetComponent<Slider>();
+        NoobHealthBar.maxValue = Noob.TotalHealth;
+        NoobHealthBar.value = Noob.Health;
         AttackMade = false;
-        CurrentState = CombatState.NoobTurn;
     }
 
-    // Update is called once per frame
+    public void StartCombat() {
+        CurrentState = CombatState.NoobTurn;
+        NoobTurn();
+        print("Starting some shit");
+    }
+
     void Update () {
+        if (CurrentState == CombatState.GameOver) print("game over!!!");
 	    if(CurrentState == CombatState.NoobTurn) {
-            if(CurrentNoob.NextAttack != Attack.None) {
-                int damage = (int)Random.Range(10, 20);
-                Health -= damage;
-                print("YOU take " + damage + " damage from " + CurrentNoob.NextAttack
-                    + " (" + Health + " remaining)");
-                if (AmDead) {
+            if(AttackMade) {
+                ChumpHealthBar.value = Chump.Health;
+                if (Chump.IsDead) {
                     CurrentState = CombatState.GameOver;
                 } else {
                     CurrentState = CombatState.ChumpTurn;
@@ -45,33 +49,61 @@ public class Combat : MonoBehaviour {
             }
         } else if(CurrentState == CombatState.ChumpTurn) {
             if (AttackMade) {
-                if (CurrentNoob.IsDead) {
+                NoobHealthBar.value = Noob.Health; 
+                if (Noob.IsDead) {
                     CurrentState = CombatState.GameOver;
                 } else {
                     CurrentState = CombatState.NoobTurn;
-                    CurrentNoob.TakeTurn();
+                    AttackMade = false;
+                    NoobTurn();
                 }
             }
         }
 	}
 
-    private void MakeAttack(Attack attack) {
-        if (CurrentState == CombatState.ChumpTurn && !AttackMade) {
-            int damage = (int)Random.Range(10, 20);
-            CurrentNoob.Health -= damage;
-            print("NOOB takes " + damage + " damage from " + attack
-                + " (" + CurrentNoob.Health + " remaining)");
-            if (CurrentNoob.IsDead) {
-                CurrentState = CombatState.GameOver;
-            }
-            AttackMade = true;
+    private void MakeAttack(Guy victim, Attack attack) {
+        int damage = (int)Random.Range(10, 20);
+        victim.Health -= damage;
+
+        print(victim.Name + " takes " + damage + " damage from " + attack
+            + " (" + victim.Health + " remaining)");
+
+        if (victim.IsDead) {
+            CurrentState = CombatState.GameOver;
+        }
+        AttackMade = true;
+    }
+
+    public void Fireball() {
+        if (CurrentState == CombatState.ChumpTurn) {
+            MakeAttack(Noob, Attack.Fireball);
         }
     }
 
-    public void Fireball() { MakeAttack(Attack.Fireball); }
-    public void Icebeam() { MakeAttack(Attack.Icebeam); }
-    public void Whirlwind() { MakeAttack(Attack.Whirlwind); }
-    public void Rocksmash() { MakeAttack(Attack.Rocksmash); }
+    public void Icebeam() {
+        if (CurrentState == CombatState.ChumpTurn) {
+            MakeAttack(Noob, Attack.Icebeam);
+        }
+    }
 
+    public void Whirlwind() {
+        if (CurrentState == CombatState.ChumpTurn) {
+            MakeAttack(Noob, Attack.Whirlwind);
+        }
+    }
 
+    public void Rocksmash() {
+        if (CurrentState == CombatState.ChumpTurn) {
+            MakeAttack(Noob, Attack.Rocksmash);
+        }
+    }
+
+    public void NoobTurn() {
+        StartCoroutine(Turn());
+    }
+
+    IEnumerator Turn() {
+        yield return new WaitForSeconds(3);
+        MakeAttack(Chump, Noob.Attacks[Random.Range(0, Noob.Attacks.Length)]);
+    }
 }

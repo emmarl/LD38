@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.UI;
 
 public class Noob : MonoBehaviour {
 
@@ -12,24 +13,7 @@ public class Noob : MonoBehaviour {
     int NoobLevel;
 
     void Start() {
-        int levelGen = Random.Range(0, 10);
-        if(levelGen < 3) {
-            NoobLevel = 1;
-            Health = 20;
-        } else if(levelGen < 9) {
-            NoobLevel = 2;
-            Health = 80;
-        } else {
-            NoobLevel = 3;
-            Health = 140;
-        }
-        Attacks = new List<Attack>();
-        Attacks.AddRange(new Attack[] {Attack.Fireball, Attack.Icebeam, Attack.Rocksmash, Attack.Whirlwind });
-        for(int i = 0; i < 4 - NoobLevel; i++) {
-            Attacks.Remove(Attacks[Random.Range(0, Attacks.Count)]);
-        }
-        print("NoobLevel: " + NoobLevel + ", Health: " + Health
-            + ", Attacks: " + AttacksToString());
+        
         NextAttack = Attack.None;
     }
     
