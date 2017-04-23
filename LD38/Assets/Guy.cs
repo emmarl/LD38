@@ -12,6 +12,7 @@ public class Guy {
 
     public Attack[] Attacks { set; get; }
     public Sprite GuySprite;
+    public int lvl;
 
     public Guy(string name, int health, Attack[] attacks, Sprite sprite) {
         Name = name;
@@ -23,10 +24,10 @@ public class Guy {
 
     public Guy(Sprite sprite) {
         int levelGen = Random.Range(0, 20);
-        int lvl = 0;
-        if (levelGen > 4 && levelGen < 13) lvl = 1;
-        if (levelGen > 12 && levelGen < 19) lvl = 2;
-        if (levelGen > 19) lvl = 3;
+        lvl = 0;
+        if (levelGen > 4 && levelGen < 6) lvl = 1;
+        if (levelGen > 5 && levelGen < 14) lvl = 2;
+        if (levelGen > 13) lvl = 3;
 
         CustomGuy(lvl, sprite);
     }
@@ -35,13 +36,15 @@ public class Guy {
         CustomGuy(i, sprite);
     }
 
-    void CustomGuy(int lvl, Sprite sprite) {
+    void CustomGuy(int l, Sprite sprite) {
         string[] lvl1 = { "Betty", "Micky", "Chris", "Nate", };
         string[] lvl2 = { "Jane", "Michael", "Ellis", "Ray", "Rick", "Lola", "Rhonda" };
         string[] lvl3 = { "Lucky", "Fritz", "Lucas", "Samantha", "Emily", "Slick" };
         string[] lvl4 = { "a dick", "Red", "Ash", "Pikachu", "ffffff" };
         string[][] GuyNames = { lvl1, lvl2, lvl3, lvl4 };
-        int[] Healths = { 20, 80, 140, 200 };
+        int[] Healths = { 20, 40, 60, 80 };
+
+        lvl = l;
 
         Name = GuyNames[lvl][Random.Range(0, GuyNames[lvl].Length)];
         TotalHealth = Healths[lvl];
