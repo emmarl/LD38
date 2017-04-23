@@ -11,34 +11,31 @@ public class Guy {
     public bool IsDead { get { return Health <= 0; } }
 
     public Attack[] Attacks { set; get; }
-    Sprite GuySprite;
-
-    SpriteRenderer GuySpriteRenderer;
+    public Sprite GuySprite;
 
     public Guy(string name, int health, Attack[] attacks, Sprite sprite) {
         Name = name;
         TotalHealth = health;
         Health = TotalHealth;
         Attacks = attacks;
-        GuySpriteRenderer = new SpriteRenderer();
-        SetSprite(sprite);
+        GuySprite = sprite;
     }
 
-    public Guy() {
+    public Guy(Sprite sprite) {
         int levelGen = Random.Range(0, 20);
         int lvl = 0;
         if (levelGen > 4 && levelGen < 13) lvl = 1;
         if (levelGen > 12 && levelGen < 19) lvl = 2;
         if (levelGen > 19) lvl = 3;
 
-        CustomGuy(lvl);
+        CustomGuy(lvl, sprite);
     }
 
-    public Guy(int i) {
-        CustomGuy(i);
+    public Guy(int i, Sprite sprite) {
+        CustomGuy(i, sprite);
     }
 
-    void CustomGuy(int lvl) {
+    void CustomGuy(int lvl, Sprite sprite) {
         string[] lvl1 = { "Betty", "Micky", "Chris", "Nate", };
         string[] lvl2 = { "Jane", "Michael", "Ellis", "Ray", "Rick", "Lola", "Rhonda" };
         string[] lvl3 = { "Lucky", "Fritz", "Lucas", "Samantha", "Emily", "Slick" };
@@ -57,17 +54,10 @@ public class Guy {
         }
         Attacks = attacks.ToArray();
 
-        //Sprite sprite = Instantiate(Resources.Load<Sprite>("noob"));
-        //GuySpriteRenderer = new SpriteRenderer();
-        //SetSprite(sprite);
+        GuySprite = sprite;
     }
 
     public void Reset() {
         Health = TotalHealth;
-    }
-
-    public void SetSprite(Sprite sprite) {
-        //GuySprite = sprite;
-        //GuySpriteRenderer.sprite = GuySprite;
     }
 }
